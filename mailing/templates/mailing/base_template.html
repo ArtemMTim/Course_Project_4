@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head><script src="/docs/5.3/assets/js/color-modes.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Сервис рассылки</title>
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  </head>
+  <body>
+
+
+
+
+
+{% include 'mailing/nav.html' %}
+
+<main class="container">
+  <div class="bg-body-tertiary p-5 rounded">
+    {% block content %}{% endblock %}
+
+
+  </div>
+</main>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
