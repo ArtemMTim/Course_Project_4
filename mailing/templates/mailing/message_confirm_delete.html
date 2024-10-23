@@ -9,12 +9,12 @@
 <div class="container">
 
         <div class="container mt-3">
-            <h1 class="mb-4">Удаление получателя</h1>
-            <p>Вы уверены, что хотите удалить получателя "{{ recipient}}" из базы данных?</p>
+            <h1 class="mb-4">Удаление сообщения</h1>
+            <p>Вы уверены, что хотите удалить сообщение "{{message}}" из базы данных?</p>
             <form method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Удалить</button>
-                <a href="{% url 'mailing:recipient_list' %}" class="btn btn-secondary">Отмена</a>
+                <a href="{% url 'mailing:message_list' %}" class="btn btn-secondary">Отмена</a>
             </form>
 
         </div>

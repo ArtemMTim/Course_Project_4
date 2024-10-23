@@ -1,6 +1,6 @@
 {% extends 'mailing/base_template.html' %}
 
-{% block title %}Создание/изменение получателя{% endblock %}
+{% block title %}Создание/изменение сообщений{% endblock %}
 
 {% block content %}
 
@@ -9,23 +9,23 @@
 <div class="container">
 
         <h1 class="mb-4">
-            {% if recipient %}
-            Форма изменения получателя
+            {% if message %}
+            Форма изменения сообщения
             {% else %}
-            Форма создания получателя
+            Форма создания сообщения
             {% endif %}
             </h1>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">
-                {% if recipient %}
+                {% if message %}
                 Сохранить
                 {% else %}
                 Создать
                 {% endif %}
             </button>
-            <a href="{% url 'mailing:recipient_list' %}" class="btn btn-secondary">Отмена</a>
+            <a href="{% url 'mailing:message_list' %}" class="btn btn-secondary">Отмена</a>
         </form>
 
 
