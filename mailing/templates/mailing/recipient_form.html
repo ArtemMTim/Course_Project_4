@@ -1,0 +1,36 @@
+{% extends 'mailing/base_template.html' %}
+
+{% block title %}Создание/изменение получателя{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container">
+
+        <h1 class="mb-4">
+            {% if post %}
+            Форма изменения получателя
+            {% else %}
+            Форма создания получателя
+            {% endif %}
+            </h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">
+                {% if recipient %}
+                Сохранить
+                {% else %}
+                Создать
+                {% endif %}
+            </button>
+            <a href="{% url 'mailing:recipient_list' %}" class="btn btn-secondary">Отмена</a>
+        </form>
+
+
+</div>
+
+
+
+{% endblock %}

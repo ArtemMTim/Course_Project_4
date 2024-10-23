@@ -1,0 +1,26 @@
+{% extends 'mailing/base_template.html' %}
+
+{% block title %}Подтверждение удаления{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container">
+
+        <div class="container mt-3">
+            <h1 class="mb-4">Удалить получателя</h1>
+            <p>Вы уверены, что хотите удалить получателя "{{ recipient}}" из базы данных?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Удалить</button>
+                <a href="{% url 'mailing:recipient_list' %}" class="btn btn-secondary">Отмена</a>
+            </form>
+
+        </div>
+
+</div>
+
+
+
+{% endblock %}
