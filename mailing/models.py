@@ -25,13 +25,17 @@ class Message(models.Model):
         ordering = ["subject"]
 
 class Mailing(models.Model):
+    FINISHED = 'завершена'
+    CREATED = 'создана'
+    ACTIVE = 'запущена'
+    STATUS_CHOICES = [(CREATED, 'создана'), (ACTIVE, 'запущена'), (FINISHED, 'завершена')]
     start_at = models.DateTimeField(verbose_name="Начало рассылки", help_text="Введите дату и время начала рассылки")
-    end_at = models.DateTimeField(verbose_name="Окончание рассылки", help_text="Введите дату и время окончания рассылки")
-    status = models.CharField(max_length=100, verbose_name="Статус рассылки", help_text="Введите статус рассылки")
+    end_at = models.DateTimeField(verbose_name="Окончание рассылки", help_text="Введите дату и время окончания рассылки", null=True, blank=True)
+    status = models.CharField(max_length=100, verbose_name="Статус рассылки", help_text="Введите статус рассылки", choices=STATUS_CHOICES, default=CREATED)
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение", help_text="Выберите сообщение для рассылки")
     recipients = models.ManyToManyField(Recipient, verbose_name="Получатели", help_text="Выберите получателей для рассылки")
     def __str__(self):
-        return f"self.message.subject - self.status"
+        return f"{self.message.subject} - {self.status}"
 
     class Meta:
         verbose_name = "рассылка"
@@ -39,8 +43,11 @@ class Mailing(models.Model):
         ordering = ["status", "message"]
 
 class Mailing_Attempts(models.Model):
+    SUCCESS = 'успешно'
+    FAILURE = 'неуспешно'
+    ATTEMPT_STATUS_CHOICES = [(SUCCESS, 'успешно'), (FAILURE, 'неуспешно')]
     attempt_date = models.DateTimeField(verbose_name="Дата попытки", help_text="Введите дату и время попытки")
-    attempt_status = models.CharField(max_length=100, verbose_name="Статус попытки", help_text="Введите статус")
+    attempt_status = models.CharField(max_length=100, verbose_name="Статус попытки", help_text="Введите статус", choices=ATTEMPT_STATUS_CHOICES, default=SUCCESS)
     mail_server_response = models.TextField(verbose_name="Ответ сервера почты", help_text="Введите ответ сервера почты")
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка", help_text="Выберите рассылку для попытки")
     def __str__(self):
