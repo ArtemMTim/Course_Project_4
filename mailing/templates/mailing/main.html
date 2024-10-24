@@ -7,13 +7,19 @@
 
 
 <div class="container">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
 
-        <div class="container">
-            <span class="text-body-primary">Список рассылок</span>
+
+
+        <div class="container mt-3">
+            <h2 class="my-0 font-weight-normal mt-3">Общая информация по рассылкам</h2>
+            <h4 class="my-0 font-weight-normal mt-3">Количество всех рассылок: {{mailing_all|length}}</h4>
+            <h4 class="my-0 font-weight-normal mt-3">Количество активных рассылок: {{mailing_active|length}}</h4>
+            <h4 class="my-0 font-weight-normal mt-3">Количество уникальных получателей: {{recipients_all|length}}</h4>
+
         </div>
 
-    </div>
+
+
 </div>
 
 

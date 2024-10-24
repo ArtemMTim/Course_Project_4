@@ -10,6 +10,8 @@ python = "^3.12"
 python-dotenv = "^1.0.1"
 django = "^5.1.2"
 psycopg2-binary = "^2.9.10"
+ipython = "^8.28.0"
+pip-system-certs = "^4.0"
 
 
 [tool.poetry.group.lint.dependencies]

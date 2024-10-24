@@ -4,7 +4,14 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Recipient, Message, Mailing, Mailing_Attempts
 
 class MailingView(TemplateView):
+    models = [Recipient, Mailing]
     template_name = 'mailing/main.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipients_all'] = Recipient.objects.all()
+        context['mailing_all'] = Message.objects.all()
+        context['mailing_active'] = Mailing.objects.filter(status=Mailing.ACTIVE)
+        return context
 
 class RecipientListView(ListView):
     model = Recipient
