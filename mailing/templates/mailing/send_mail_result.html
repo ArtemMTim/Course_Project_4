@@ -1,0 +1,21 @@
+{% extends 'mailing/base_template.html' %}
+
+{% block title %}Отчёт об отправке рассылки{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container mt-3">
+    <h2 class="my-0 font-weight-normal mt-3">Отчёт о рассылке:</h2>
+    <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{subject}}</h4>
+    <h4 class="my-0 font-weight-normal mt-3">Текст рассылки: {{message}}</h4>
+    <h4 class="my-0 font-weight-normal mt-3">Список адресатов рассылки: {{recipient_list}}</h4>
+    <h4 class="my-0 font-weight-normal mt-3">Результат: {{result}}</h4>
+
+
+</div>
+
+
+
+{% endblock %}
