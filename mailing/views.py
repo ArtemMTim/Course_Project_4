@@ -1,13 +1,15 @@
 from datetime import datetime
 
+from django.conf import settings
+from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .models import Recipient, Message, Mailing, Mailing_Attempts
-from django.core.mail import send_mail
-from django.conf import settings
-from django.http import HttpResponse
-from django.shortcuts import render
+
+from .forms import MailingForm, MessageForm, RecipientForm
+from .models import Mailing, Mailing_Attempts, Message, Recipient
 
 
 class MailingView(TemplateView):
@@ -34,14 +36,16 @@ class RecipientDetailView(DetailView):
 
 class RecipientCreateView(CreateView):
     model = Recipient
-    fields = ["email", "full_name", "comment"]
+    # fields = ["email", "full_name", "comment"]
+    form_class = RecipientForm
     template_name = "mailing/recipient_form.html"
     success_url = reverse_lazy("mailing:recipient_list")
 
 
 class RecipientUpdateView(UpdateView):
     model = Recipient
-    fields = ["email", "full_name", "comment"]
+    # fields = ["email", "full_name", "comment"]
+    form_class = RecipientForm
     template_name = "mailing/recipient_form.html"
     success_url = reverse_lazy("mailing:recipient_list")
 
@@ -67,14 +71,16 @@ class MessageDetailView(DetailView):
 
 class MessageCreateView(CreateView):
     model = Message
-    fields = ["subject", "text"]
+    # fields = ["subject", "text"]
+    form_class = MessageForm
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:message_list")
 
 
 class MessageUpdateView(UpdateView):
     model = Message
-    fields = ["subject", "text"]
+    # fields = ["subject", "text"]
+    form_class = MessageForm
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:message_list")
 
@@ -100,14 +106,16 @@ class MailingDetailView(DetailView):
 
 class MailingCreateView(CreateView):
     model = Mailing
-    fields = ["start_at", "end_at", "status", "message", "recipients"]
+    # fields = ["start_at", "end_at", "status", "message", "recipients"]
+    form_class = MailingForm
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailing_list")
 
 
 class MailingUpdateView(UpdateView):
     model = Mailing
-    fields = ["start_at", "end_at", "status", "message", "recipients"]
+    # fields = ["start_at", "end_at", "status", "message", "recipients"]
+    form_class = MailingForm
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailing_list")
 
@@ -121,9 +129,15 @@ class MailingDeleteView(DeleteView):
     success_url = reverse_lazy("mailing:mailing_list")
 
 
-def sending_mail(request, *args, **kwargs):
+class MailingAttemptsListView(ListView):
+    model = Mailing_Attempts
+    template_name = "mailing/mailing_attempts_list.html"
+
+
+def sending_mail_active(request, *args, **kwargs):
     mails = Mailing.objects.filter(status=Mailing.ACTIVE)
     email_from = settings.EMAIL_HOST_USER
+    attempts_list = []
 
     for mailing in mails:
         subject = mailing.message.subject
@@ -140,9 +154,9 @@ def sending_mail(request, *args, **kwargs):
             )
             mailing_attempts.save()
             result = f"Sending mail successful"
-            context = {'subject': subject,'message': message,'recipient_list': recipient_list, 'result': result}
-            return render(request, "mailing/send_mail_result.html", context)
-
+            # context = {'subject': subject,'message': message,'recipient_list': recipient_list, 'result': result}
+            attempts_list.append((result, subject, message, recipient_list))
+            # return render(request, "mailing/send_mail_result.html", context)
 
         except Exception as e:
             mailing_attempts = Mailing_Attempts(
@@ -153,5 +167,52 @@ def sending_mail(request, *args, **kwargs):
             )
             mailing_attempts.save()
             result = f"Sending mail failed with: {str(e)}"
-            context = {'subject': subject, 'message': message, 'recipient_list': recipient_list, 'result': result}
-            return render(request, "mailing/send_mail_result.html", context)
+            # context = {'subject': subject, 'message': message, 'recipient_list': recipient_list, 'result': result}
+            attempts_list.append((result, subject, message, recipient_list))
+            # return render(request, "mailing/send_mail_result.html", context)
+
+    context = {"attempts_list": attempts_list}
+    return render(request, "mailing/send_mail_result.html", context)
+
+
+def sending_mail_created(request, *args, **kwargs):
+    mails = Mailing.objects.filter(status=Mailing.CREATED)
+    email_from = settings.EMAIL_HOST_USER
+    attempts_list = []
+
+    for mailing in mails:
+        subject = mailing.message.subject
+        message = mailing.message.text
+        recipient_list = [recipient.email for recipient in mailing.recipients.all()]
+
+        try:
+            send_mail(subject, message, email_from, recipient_list)
+            mailing.status = Mailing.ACTIVE
+            mailing.start_at = datetime.now()
+            mailing.save()
+            mailing_attempts = Mailing_Attempts(
+                attempt_date=datetime.now(),
+                attempt_status=Mailing_Attempts.SUCCESS,
+                mail_server_response="Email sent successfully",
+                mailing=mailing,
+            )
+            mailing_attempts.save()
+            result = f"Sending mail successful"
+            attempts_list.append((result, subject, message, recipient_list))
+
+        except Exception as e:
+            mailing.status = Mailing.ACTIVE
+            mailing.start_at = datetime.now()
+            mailing.save()
+            mailing_attempts = Mailing_Attempts(
+                attempt_date=datetime.now(),
+                attempt_status=Mailing_Attempts.FAILURE,
+                mail_server_response=str(e),
+                mailing=mailing,
+            )
+            mailing_attempts.save()
+            result = f"Sending mail failed with: {str(e)}"
+            attempts_list.append((result, subject, message, recipient_list))
+
+    context = {"attempts_list": attempts_list}
+    return render(request, "mailing/send_mail_result.html", context)

@@ -17,9 +17,17 @@
             <h4 class="my-0 font-weight-normal mt-3">Количество уникальных получателей: {{recipients_all|length}}</h4>
 
         </div>
+</div>
+
+<div class="container">
+    <div class="container mt-5">
+        <div class="btn-group">
+            <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:send_mail_active' %}" role="button">Отправить активные рассылки</a>
+            <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:send_mail_created' %}" role="button">Отправить созданные рассылки</a>
 
 
-
+        </div>
+    </div>
 </div>
 
 

@@ -39,7 +39,7 @@ class Mailing(models.Model):
     CREATED = "создана"
     ACTIVE = "запущена"
     STATUS_CHOICES = [(CREATED, "создана"), (ACTIVE, "запущена"), (FINISHED, "завершена")]
-    start_at = models.DateTimeField(verbose_name="Начало рассылки", help_text="Введите дату и время начала рассылки")
+    start_at = models.DateTimeField(verbose_name="Начало рассылки", null=True, blank=True)
     end_at = models.DateTimeField(
         verbose_name="Окончание рассылки", help_text="Введите дату и время окончания рассылки", null=True, blank=True
     )
@@ -86,7 +86,7 @@ class Mailing_Attempts(models.Model):
     )
 
     def __str__(self):
-        return f"self.mailing - self.attempt_status"
+        return f"{self.mailing.message.subject} - {self.attempt_status} - {self.mail_server_response} - {self.attempt_date}"
 
     class Meta:
         verbose_name = "попытка рассылки"

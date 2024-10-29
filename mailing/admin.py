@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Recipient, Message, Mailing, Mailing_Attempts
+
+from .models import Mailing, Mailing_Attempts, Message, Recipient
 
 
 @admin.register(Recipient)

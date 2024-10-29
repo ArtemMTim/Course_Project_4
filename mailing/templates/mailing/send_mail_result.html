@@ -6,12 +6,24 @@
 
 
 
-<div class="container mt-3">
-    <h2 class="my-0 font-weight-normal mt-3">Отчёт о рассылке:</h2>
-    <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{subject}}</h4>
-    <h4 class="my-0 font-weight-normal mt-3">Текст рассылки: {{message}}</h4>
-    <h4 class="my-0 font-weight-normal mt-3">Список адресатов рассылки: {{recipient_list}}</h4>
-    <h4 class="my-0 font-weight-normal mt-3">Результат: {{result}}</h4>
+
+<div class="container">
+    <div class="container mt-3">
+            <h2 class="my-0 font-weight-normal">Отчёты о рассылках:</h2>
+    </div>
+
+        {% for mailing_attempt in attempts_list %}
+
+        <div class="container mt-3">
+            <h4 class="my-0 font-weight-normal">Результат рассылки: {{mailing_attempt.0}}</h4>
+            <h4 class="my-0 font-weight-normal">Тема рассылки: {{mailing_attempt.1}}</h4>
+            <h4 class="my-0 font-weight-normal">Текст рассылки: {{mailing_attempt.2}}</h4>
+            <h4 class="my-0 font-weight-normal">Адресаты рассылки: {{mailing_attempt.3}}</h4>
+
+        </div>
+        {% endfor %}
+
+</div>
 
 
 </div>
