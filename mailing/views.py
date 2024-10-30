@@ -19,7 +19,7 @@ class MailingView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["recipients_all"] = Recipient.objects.all()
-        context["mailing_all"] = Message.objects.all()
+        context["mailing_all"] = Mailing.objects.all()
         context["mailing_active"] = Mailing.objects.filter(status=Mailing.ACTIVE)
         return context
 
@@ -216,3 +216,11 @@ def sending_mail_created(request, *args, **kwargs):
 
     context = {"attempts_list": attempts_list}
     return render(request, "mailing/send_mail_result.html", context)
+
+def finish_mailing(request, pk):
+    mail = Mailing.objects.get(pk=pk)
+    mail.status = Mailing.FINISHED
+    mail.end_at = datetime.now()
+    mail.save()
+    context = {"mail": mail}
+    return render(request, "mailing/finished_mailing_info.html", context)
