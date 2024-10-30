@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import Mailing, Mailing_Attempts, Message, Recipient
+from .models import Mailing, Message, Recipient
 
 
 class RecipientForm(forms.ModelForm):

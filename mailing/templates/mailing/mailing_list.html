@@ -19,7 +19,7 @@
                 <div class="btn-group">
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:mailing_detail' mailing.pk %}" role="button">Подробнее</a>
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:mailing_update' mailing.pk %}" role="button">Изменить</a>
-                    <a class="btn btn-lg btn-block btn-outline-primary" href="#" role="button">Отправить</a>
+                    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:send_one_mail_created' mailing.pk %}" role="button">Отправить</a>
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:finish_mailing' mailing.pk %}" role="button">Завершить</a>
                 </div>
               </div>
@@ -28,7 +28,7 @@
         {% endfor %}
     </div>
 
-        <div class="container mt-3">
+        <div class="container mt-5">
 
             <h2 class="my-0 font-weight-normal">Активные рассылки:</h2>
             {% for mailing in object_list %}
@@ -38,7 +38,7 @@
                 <div class="btn-group">
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:mailing_detail' mailing.pk %}" role="button">Подробнее</a>
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:mailing_update' mailing.pk %}" role="button">Изменить</a>
-                    <a class="btn btn-lg btn-block btn-outline-primary" href="#" role="button">Отправить</a>
+                    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:send_one_mail_active' mailing.pk %}" role="button">Отправить</a>
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:finish_mailing' mailing.pk %}" role="button">Завершить</a>
                 </div>
               </div>
@@ -47,7 +47,7 @@
         {% endfor %}
     </div>
 
-    <div class="container mt-3">
+    <div class="container mt-5">
 
             <h2 class="my-0 font-weight-normal">Завершённые рассылки:</h2>
             {% for mailing in object_list %}

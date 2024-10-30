@@ -19,9 +19,11 @@ from mailing.views import (
     RecipientDetailView,
     RecipientListView,
     RecipientUpdateView,
+    finish_mailing,
     sending_mail_active,
     sending_mail_created,
-    finish_mailing
+    sending_one_mail_active,
+    sending_one_mail_created,
 )
 
 app_name = MailingConfig.name
@@ -47,4 +49,6 @@ urlpatterns = [
     path("send_mail_active/", sending_mail_active, name="send_mail_active"),
     path("send_mail_created/", sending_mail_created, name="send_mail_created"),
     path("finish_mailing/<int:pk>/", finish_mailing, name="finish_mailing"),
+    path("send_mail_created/<int:pk>/", sending_one_mail_created, name="send_one_mail_created"),
+    path("send_mail_active/<int:pk>/", sending_one_mail_active, name="send_one_mail_active"),
 ]
