@@ -11,9 +11,11 @@
     <h1 class="my-0 font-weight-normal text-center">Список рассылок с группировкой по статусу</h1>
     <div class="container mt-3">
 
+
+            {% if mailing_created %}
             <h2 class="my-0 font-weight-normal">Созданные рассылки:</h2>
-            {% for mailing in object_list %}
-            {% if mailing.status == mailing.CREATED %}
+            {% for mailing in mailing_created %}
+
             <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{mailing.message.subject}}</h4>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
@@ -24,15 +26,17 @@
                 </div>
               </div>
 
-        {% endif %}
+
         {% endfor %}
+        {% endif %}
     </div>
 
         <div class="container mt-5">
 
+            {% if mailing_active %}
+
             <h2 class="my-0 font-weight-normal">Активные рассылки:</h2>
-            {% for mailing in object_list %}
-            {% if mailing.status == mailing.ACTIVE %}
+            {% for mailing in mailing_active %}
             <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{mailing.message.subject}}</h4>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
@@ -42,16 +46,17 @@
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:finish_mailing' mailing.pk %}" role="button">Завершить</a>
                 </div>
               </div>
-
-        {% endif %}
         {% endfor %}
+        {% endif %}
+
     </div>
 
     <div class="container mt-5">
 
+
+            {% if mailing_finished %}
             <h2 class="my-0 font-weight-normal">Завершённые рассылки:</h2>
-            {% for mailing in object_list %}
-            {% if mailing.status == mailing.FINISHED %}
+            {% for mailing in mailing_finished %}
             <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{mailing.message.subject}}</h4>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
@@ -59,9 +64,9 @@
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:mailing_update' mailing.pk %}" role="button">Изменить</a>
                 </div>
               </div>
-
-        {% endif %}
         {% endfor %}
+        {% endif %}
+
     </div>
 
 </div>

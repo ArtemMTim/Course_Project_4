@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.conf import settings
 from django.core.mail import send_mail
-
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
@@ -97,6 +96,13 @@ class MessageDeleteView(DeleteView):
 class MailingListView(ListView):
     model = Mailing
     template_name = "mailing/mailing_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["mailing_created"] = Mailing.objects.filter(status=Mailing.CREATED)
+        context["mailing_active"] = Mailing.objects.filter(status=Mailing.ACTIVE)
+        context["mailing_finished"] = Mailing.objects.filter(status=Mailing.FINISHED)
+        return context
 
 
 class MailingDetailView(DetailView):
