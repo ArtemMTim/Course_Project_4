@@ -12,6 +12,7 @@ django = "^5.1.2"
 psycopg2-binary = "^2.9.10"
 ipython = "^8.28.0"
 pip-system-certs = "^4.0"
+pillow = "^11.0.0"
 
 
 [tool.poetry.group.lint.dependencies]
