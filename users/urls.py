@@ -3,7 +3,7 @@ from django.urls import path
 
 from users.apps import UsersConfig
 
-from .views import RegisterView
+from .views import RegisterView, email_verification
 
 app_name = UsersConfig.name
 
@@ -15,6 +15,7 @@ urlpatterns = [
         RegisterView.as_view(template_name="register.html"),
         name="register",
     ),
+    path('email_confirm/<str:token>/', email_verification, name="email_verification"),
 ]
 
 ################################################################
