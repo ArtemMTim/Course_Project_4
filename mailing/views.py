@@ -40,6 +40,13 @@ class RecipientCreateView(CreateView):
     template_name = "mailing/recipient_form.html"
     success_url = reverse_lazy("mailing:recipient_list")
 
+    def form_valid(self, form):
+        recipients = form.save()
+        user = self.request.user
+        recipients.owner = user
+        recipients.save()
+        return super().form_valid(form)
+
 
 class RecipientUpdateView(UpdateView):
     model = Recipient
@@ -74,6 +81,13 @@ class MessageCreateView(CreateView):
     form_class = MessageForm
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:message_list")
+
+    def form_valid(self, form):
+        message = form.save()
+        user = self.request.user
+        message.owner = user
+        message.save()
+        return super().form_valid(form)
 
 
 class MessageUpdateView(UpdateView):
@@ -117,6 +131,13 @@ class MailingCreateView(CreateView):
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailing_list")
 
+    def form_valid(self, form):
+        mailing = form.save()
+        user = self.request.user
+        mailing.owner = user
+        mailing.save()
+        return super().form_valid(form)
+
 
 class MailingUpdateView(UpdateView):
     model = Mailing
@@ -148,6 +169,7 @@ def sending_mail_active(request, *args, **kwargs):
     for mailing in mails:
         subject = mailing.message.subject
         message = mailing.message.text
+        owner = mailing.owner
         recipient_list = [recipient.email for recipient in mailing.recipients.all()]
 
         try:
@@ -157,6 +179,7 @@ def sending_mail_active(request, *args, **kwargs):
                 attempt_status=Mailing_Attempts.SUCCESS,
                 mail_server_response="Email sent successfully",
                 mailing=mailing,
+                owner=owner,
             )
             mailing_attempts.save()
             result = "Sending mail successful"
@@ -169,6 +192,7 @@ def sending_mail_active(request, *args, **kwargs):
                 attempt_status=Mailing_Attempts.FAILURE,
                 mail_server_response=str(e),
                 mailing=mailing,
+                owner=owner,
             )
             mailing_attempts.save()
             result = f"Sending mail failed with: {str(e)}"
@@ -187,6 +211,7 @@ def sending_one_mail_active(request, pk):
 
     subject = mail.message.subject
     message = mail.message.text
+    owner = mail.owner
     recipient_list = [recipient.email for recipient in mail.recipients.all()]
 
     try:
@@ -196,6 +221,7 @@ def sending_one_mail_active(request, pk):
             attempt_status=Mailing_Attempts.SUCCESS,
             mail_server_response="Email sent successfully",
             mailing=mail,
+            owner=owner,
         )
         mailing_attempts.save()
         result = "Sending mail successful"
@@ -208,6 +234,7 @@ def sending_one_mail_active(request, pk):
             attempt_status=Mailing_Attempts.FAILURE,
             mail_server_response=str(e),
             mailing=mail,
+            owner=owner,
         )
         mailing_attempts.save()
         result = f"Sending mail failed with: {str(e)}"
@@ -226,6 +253,7 @@ def sending_mail_created(request, *args, **kwargs):
     for mailing in mails:
         subject = mailing.message.subject
         message = mailing.message.text
+        owner = mailing.owner
         recipient_list = [recipient.email for recipient in mailing.recipients.all()]
 
         try:
@@ -238,6 +266,7 @@ def sending_mail_created(request, *args, **kwargs):
                 attempt_status=Mailing_Attempts.SUCCESS,
                 mail_server_response="Email sent successfully",
                 mailing=mailing,
+                owner=owner,
             )
             mailing_attempts.save()
             result = "Sending mail successful"
@@ -252,6 +281,7 @@ def sending_mail_created(request, *args, **kwargs):
                 attempt_status=Mailing_Attempts.FAILURE,
                 mail_server_response=str(e),
                 mailing=mailing,
+                owner=owner,
             )
             mailing_attempts.save()
             result = f"Sending mail failed with: {str(e)}"
@@ -269,6 +299,7 @@ def sending_one_mail_created(request, pk):
 
     subject = mail.message.subject
     message = mail.message.text
+    owner = mail.owner
     recipient_list = [recipient.email for recipient in mail.recipients.all()]
 
     try:
@@ -281,6 +312,7 @@ def sending_one_mail_created(request, pk):
             attempt_status=Mailing_Attempts.SUCCESS,
             mail_server_response="Email sent successfully",
             mailing=mail,
+            owner=owner,
         )
         mailing_attempts.save()
         result = "Sending mail successful"
@@ -295,6 +327,7 @@ def sending_one_mail_created(request, pk):
             attempt_status=Mailing_Attempts.FAILURE,
             mail_server_response=str(e),
             mailing=mail,
+            owner=owner,
         )
         mailing_attempts.save()
         result = f"Sending mail failed with: {str(e)}"
