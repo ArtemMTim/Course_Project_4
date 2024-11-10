@@ -10,7 +10,6 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.shortcuts import get_object_or_404, redirect
 from .models import User
-
 from .forms import UserForgotPasswordForm, UserRegisterForm, UserSetNewPasswordForm
 
 

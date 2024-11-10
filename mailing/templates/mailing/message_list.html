@@ -11,7 +11,7 @@
             <h1 class="my-0 font-weight-normal text-center">Сообщения</h1>
     </div>
         {% for message in object_list %}
-
+        {% if perms.message.view_message or user == message.owner %}
         <div class="container mt-3">
             <h4 class="my-0 font-weight-normal">Тема сообщения: {{message}}</h4>
             <h4 class="my-0 font-weight-normal">Текст сообщения: {{message.text|truncatechars:40}}</h4>
@@ -22,6 +22,7 @@
                 </div>
               </div>
         </div>
+    {% endif %}
         {% endfor %}
 
 

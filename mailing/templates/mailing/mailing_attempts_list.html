@@ -12,6 +12,7 @@
     </div>
 
         {% for mailing_attempt in object_list %}
+    {% if perms.mailing_attempts.view_mailing_attempts or user == mailing_attempts.owner %}
 
         <div class="container mt-3">
             <h4 class="my-0 font-weight-normal">Рассылка:</h4>
@@ -22,6 +23,7 @@
 
               </div>
         </div>
+    {% endif %}
         {% endfor %}
 
 

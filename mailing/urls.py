@@ -24,6 +24,9 @@ from mailing.views import (
     sending_mail_created,
     sending_one_mail_active,
     sending_one_mail_created,
+    UsersListView,
+    BlockUserView,
+    UnblockUserView,
 )
 
 app_name = MailingConfig.name
@@ -51,4 +54,7 @@ urlpatterns = [
     path("finish_mailing/<int:pk>/", finish_mailing, name="finish_mailing"),
     path("send_mail_created/<int:pk>/", sending_one_mail_created, name="send_one_mail_created"),
     path("send_mail_active/<int:pk>/", sending_one_mail_active, name="send_one_mail_active"),
+    path("users_list/", UsersListView.as_view(), name="users_list"),
+    path("users/<int:pk>/block", BlockUserView.as_view(), name="users_block"),
+    path("users/<int:pk>/unblock", UnblockUserView.as_view(), name="users_unblock"),
 ]

@@ -1,14 +1,18 @@
 from datetime import datetime
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect
+
 
 from .forms import MailingForm, MessageForm, RecipientForm
 from .models import Mailing, Mailing_Attempts, Message, Recipient
+from users.models import User
 
 
 class MailingView(TemplateView):
@@ -344,3 +348,28 @@ def finish_mailing(request, pk):
     mail.save()
     context = {"mail": mail}
     return render(request, "mailing/finished_mailing_info.html", context)
+
+
+class UsersListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = "users_list.html"
+
+class BlockUserView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        if not request.user.has_perm("can_block_user"):
+            return HttpResponseForbidden("У вас нет прав на это действие.")
+
+        user.is_active = False
+        user.save()
+        return redirect("mailing:users_list")
+
+class UnblockUserView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        if not request.user.has_perm("can_block_user"):
+            return HttpResponseForbidden("У вас нет прав на это действие.")
+
+        user.is_active = True
+        user.save()
+        return redirect("mailing:users_list")

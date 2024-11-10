@@ -48,9 +48,10 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+        permissions = [("can_block_user", "can block user")]
 
     def __str__(self):
-        return self.email
+        return f"{self.first_name} {self.last_name}, e-mail: {self.email}, разблокирован: {self.is_active}"
 
 
 # Create your models here.

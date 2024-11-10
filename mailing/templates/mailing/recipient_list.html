@@ -11,6 +11,7 @@
             <h1 class="my-0 font-weight-normal text-center">Получатели</h1>
     </div>
         {% for recipient in object_list %}
+        {% if perms.recipient.view_recipient or user == recipient.owner %}
 
         <div class="container mt-3">
             <h4 class="my-0 font-weight-normal">Получатель: {{recipient}}</h4>
@@ -21,6 +22,7 @@
                 </div>
               </div>
         </div>
+    {% endif %}
         {% endfor %}
 
 
