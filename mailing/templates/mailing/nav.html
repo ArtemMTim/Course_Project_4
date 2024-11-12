@@ -24,23 +24,27 @@
           <a class="nav-link active" aria-current="page" href="{% url 'mailing:users_list' %}">Пользователи сервиса</a>
         </li>
         {% endif %}}
-        </ul>
-      {% endif %}
-      <ul class="navbar-nav me-auto mb-2 mb-md-0">
-        {% if user.is_authenticated %}
+
+
+
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'mailing:users_detail' user.pk %}">Мой профиль</a>
+        </li>
         <li class="nav-item">
         <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit" class="btn btn-link nav-link">Выйти из {{ user.email }}</button>
+            <button type="submit" class="btn btn-link nav-link">Выйти</button>
         </form>
           </li>
         {% else %}
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
         <a class="nav-link active" aria-current="page" href="{% url 'users:login' %}">Войти</a>
         </li>
           <li class="nav-item">
         <a class="nav-link active" aria-current="page" href="{% url 'users:register' %}">Регистрация</a>
             </li>
+        </ul>
 
         {% endif %}
       </ul>

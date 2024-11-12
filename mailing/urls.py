@@ -27,6 +27,8 @@ from mailing.views import (
     UsersListView,
     BlockUserView,
     UnblockUserView,
+    UserDetailView,
+    UserUpdateView,
 )
 
 app_name = MailingConfig.name
@@ -57,4 +59,6 @@ urlpatterns = [
     path("users_list/", UsersListView.as_view(), name="users_list"),
     path("users/<int:pk>/block", BlockUserView.as_view(), name="users_block"),
     path("users/<int:pk>/unblock", UnblockUserView.as_view(), name="users_unblock"),
+    path("users/<int:pk>/", UserDetailView.as_view(), name="users_detail"),
+    path("users/<int:pk>/update/", UserUpdateView.as_view(), name="users_update"),
 ]

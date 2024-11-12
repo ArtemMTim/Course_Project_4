@@ -9,5 +9,4 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ("id", "email", "phone_number", "country", "avatar")
 
 
-
 # Register your models here.

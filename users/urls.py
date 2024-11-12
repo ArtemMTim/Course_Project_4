@@ -15,7 +15,7 @@ urlpatterns = [
         RegisterView.as_view(template_name="register.html"),
         name="register",
     ),
-    path('email_confirm/<str:token>/', email_verification, name="email_verification"),
+    path("email_confirm/<str:token>/", email_verification, name="email_verification"),
 ]
 
 ################################################################

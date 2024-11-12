@@ -13,6 +13,20 @@ from django.shortcuts import get_object_or_404, redirect
 from .forms import MailingForm, MessageForm, RecipientForm
 from .models import Mailing, Mailing_Attempts, Message, Recipient
 from users.models import User
+from users.forms import UserRegisterForm, UserUpdateForm
+
+
+class UserDetailView(DetailView):
+    model = User
+    template_name = "user_detail.html"
+
+
+class UserUpdateView(UpdateView):
+    model = User
+    #fields = ["email", "first_name", "last_name", "phone_number", "avatar", "country", ""]
+    form_class = UserUpdateForm
+    template_name = "users_form.html"
+    success_url = reverse_lazy("mailing:main")
 
 
 class MailingView(TemplateView):
@@ -28,16 +42,22 @@ class MailingView(TemplateView):
 
 
 class RecipientListView(ListView):
+    """Контроллер отображения списка получателей."""
+
     model = Recipient
     template_name = "mailing/recipient_list.html"
 
 
 class RecipientDetailView(DetailView):
+    """Контроллер отображения подробностей о получателе."""
+
     model = Recipient
     template_name = "mailing/recipient_detail.html"
 
 
 class RecipientCreateView(CreateView):
+    """Контроллер создания получателя."""
+
     model = Recipient
     # fields = ["email", "full_name", "comment"]
     form_class = RecipientForm
@@ -53,6 +73,8 @@ class RecipientCreateView(CreateView):
 
 
 class RecipientUpdateView(UpdateView):
+    """Контроллер изменения получателя."""
+
     model = Recipient
     # fields = ["email", "full_name", "comment"]
     form_class = RecipientForm
@@ -64,22 +86,30 @@ class RecipientUpdateView(UpdateView):
 
 
 class RecipientDeleteView(DeleteView):
+    """Контроллер контроллер удаления получателя."""
+
     model = Recipient
     template_name = "mailing/recipient_confirm_delete.html"
     success_url = reverse_lazy("mailing:recipient_list")
 
 
 class MessageListView(ListView):
+    """Контроллер отображения списка сообщений."""
+
     model = Message
     template_name = "mailing/message_list.html"
 
 
 class MessageDetailView(DetailView):
+    """Контроллер отображения подробностей о сообщении."""
+
     model = Message
     template_name = "mailing/message_detail.html"
 
 
 class MessageCreateView(CreateView):
+    """Контроллер создания сообщения."""
+
     model = Message
     # fields = ["subject", "text"]
     form_class = MessageForm
@@ -95,6 +125,8 @@ class MessageCreateView(CreateView):
 
 
 class MessageUpdateView(UpdateView):
+    """Контроллер изменения сообщения."""
+
     model = Message
     # fields = ["subject", "text"]
     form_class = MessageForm
@@ -106,12 +138,16 @@ class MessageUpdateView(UpdateView):
 
 
 class MessageDeleteView(DeleteView):
+    """Контроллер удаления сообщения."""
+
     model = Message
     template_name = "mailing/message_confirm_delete.html"
     success_url = reverse_lazy("mailing:message_list")
 
 
 class MailingListView(ListView):
+    """Контроллер отображения списка рассылок."""
+
     model = Mailing
     template_name = "mailing/mailing_list.html"
 
@@ -124,11 +160,15 @@ class MailingListView(ListView):
 
 
 class MailingDetailView(DetailView):
+    """Контроллер отображения подробностей о рассылке."""
+
     model = Mailing
     template_name = "mailing/mailing_detail.html"
 
 
 class MailingCreateView(CreateView):
+    """Контроллер создания рассылки."""
+
     model = Mailing
     # fields = ["start_at", "end_at", "status", "message", "recipients"]
     form_class = MailingForm
@@ -144,6 +184,8 @@ class MailingCreateView(CreateView):
 
 
 class MailingUpdateView(UpdateView):
+    """Контроллер изменения рассылки."""
+
     model = Mailing
     # fields = ["start_at", "end_at", "status", "message", "recipients"]
     form_class = MailingForm
@@ -155,12 +197,16 @@ class MailingUpdateView(UpdateView):
 
 
 class MailingDeleteView(DeleteView):
+    """Контроллер удаления рассылки."""
+
     model = Mailing
     template_name = "mailing/mailing_confirm_delete.html"
     success_url = reverse_lazy("mailing:mailing_list")
 
 
 class MailingAttemptsListView(ListView):
+    """Контроллер отображения списка попыток отправки."""
+
     model = Mailing_Attempts
     template_name = "mailing/mailing_attempts_list.html"
 
@@ -354,6 +400,7 @@ class UsersListView(LoginRequiredMixin, ListView):
     model = User
     template_name = "users_list.html"
 
+
 class BlockUserView(LoginRequiredMixin, View):
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
@@ -363,6 +410,7 @@ class BlockUserView(LoginRequiredMixin, View):
         user.is_active = False
         user.save()
         return redirect("mailing:users_list")
+
 
 class UnblockUserView(LoginRequiredMixin, View):
     def post(self, request, pk):
