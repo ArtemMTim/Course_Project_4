@@ -8,6 +8,7 @@ from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
+from .service import get_message_list
 
 
 from .forms import MailingForm, MessageForm, RecipientForm
@@ -98,6 +99,8 @@ class MessageListView(ListView):
 
     model = Message
     template_name = "mailing/message_list.html"
+    def get_queryset(self):
+        return get_message_list().filter(owner=self.request.user)
 
 
 class MessageDetailView(DetailView):

@@ -13,6 +13,7 @@ psycopg2-binary = "^2.9.10"
 ipython = "^8.28.0"
 pip-system-certs = "^4.0"
 pillow = "^11.0.0"
+redis = "^5.2.0"
 
 
 [tool.poetry.group.lint.dependencies]
