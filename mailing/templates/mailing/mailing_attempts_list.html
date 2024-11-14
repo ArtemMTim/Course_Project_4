@@ -12,18 +12,19 @@
     </div>
 
         {% for mailing_attempt in object_list %}
-    {% if perms.mailing_attempts.view_mailing_attempts or user == mailing_attempts.owner %}
+
 
         <div class="container mt-3">
-            <h4 class="my-0 font-weight-normal">Рассылка:</h4>
-            <h4 class="my-0 font-weight-normal">Тема рассылки: {{mailing_attempt.mailing.message.subject}}</h4>
-            <h4 class="my-0 font-weight-normal">Статус рассылки: {{mailing_attempt.attempt_status}}</h4>
+            <h4 class="my-0 font-weight-normal">Рассылка: </h4>
+            <h4 class="my-0 font-weight-normal">Статус: {{mailing_attempt.attempt_status}}</h4>
+            <h4 class="my-0 font-weight-normal">Ответ сервера: {{mailing_attempt.mail_server_response}}</h4>
             <h4 class="my-0 font-weight-normal">Дата рассылки: {{mailing_attempt.attempt_date}}</h4>
+            <h4 class="my-0 font-weight-normal">Рассылка: {{mailing_attempt.mailing}}</h4>
             <div class="d-flex justify-content-between align-items-center">
 
               </div>
         </div>
-    {% endif %}
+
         {% endfor %}
 
 

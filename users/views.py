@@ -1,16 +1,17 @@
 import secrets
-from audioop import reverse
+
 
 from django.conf import settings
-from django.contrib.auth import login
+
 from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
-from django.shortcuts import get_object_or_404, redirect
-from .models import User
+
 from .forms import UserForgotPasswordForm, UserRegisterForm, UserSetNewPasswordForm
+from .models import User
 
 
 class RegisterView(CreateView):

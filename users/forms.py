@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserChangeForm, UserCreationForm
 
 from .models import User
 
@@ -44,6 +44,7 @@ class UserRegisterForm(UserCreationForm):
             raise forms.ValidationError("Номер телефона должен содержать только цифры.")
         return phone_number
 
+
 class UserUpdateForm(UserChangeForm):
     phone_number = forms.CharField(max_length=15, required=False, help_text="Введите номер телефона")
     country = forms.CharField(max_length=50, required=False, help_text="Укажите Вашу страну проживания")
@@ -57,7 +58,6 @@ class UserUpdateForm(UserChangeForm):
             "phone_number",
             "avatar",
             "country",
-
         ]
 
     def __init__(self, *args, **kwargs):
@@ -75,13 +75,11 @@ class UserUpdateForm(UserChangeForm):
             {"class": "form-control", "placeholder": "Укажите Вашу страну проживания"}
         )
 
-
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get("phone_number")
         if phone_number and not phone_number.isdigit():
             raise forms.ValidationError("Номер телефона должен содержать только цифры.")
         return phone_number
-
 
 
 ################################################################

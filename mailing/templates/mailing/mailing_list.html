@@ -15,7 +15,7 @@
             {% if mailing_created %}
             <h2 class="my-0 font-weight-normal">Созданные рассылки:</h2>
             {% for mailing in mailing_created %}
-        {% if perms.mailing.view_mailing or user == mailing.owner %}
+
 
             <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{mailing.message.subject}}</h4>
             <div class="d-flex justify-content-between align-items-center">
@@ -26,7 +26,7 @@
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:finish_mailing' mailing.pk %}" role="button">Завершить</a>
                 </div>
               </div>
-        {% endif %}
+
 
 
         {% endfor %}
@@ -39,7 +39,7 @@
 
             <h2 class="my-0 font-weight-normal">Активные рассылки:</h2>
             {% for mailing in mailing_active %}
-            {% if perms.mailing.view_mailing or user == mailing.owner %}
+
             <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{mailing.message.subject}}</h4>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
@@ -49,7 +49,7 @@
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:finish_mailing' mailing.pk %}" role="button">Завершить</a>
                 </div>
               </div>
-            {% endif %}
+
         {% endfor %}
         {% endif %}
 
@@ -62,7 +62,7 @@
 
             <h2 class="my-0 font-weight-normal">Завершённые рассылки:</h2>
             {% for mailing in mailing_finished %}
-        {% if perms.mailing.view_mailing or user == mailing.owner %}
+
             <h4 class="my-0 font-weight-normal mt-3">Тема рассылки: {{mailing.message.subject}}</h4>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
@@ -70,7 +70,7 @@
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:mailing_update' mailing.pk %}" role="button">Изменить</a>
                 </div>
               </div>
-        {% endif %}
+
         {% endfor %}
         {% endif %}
 

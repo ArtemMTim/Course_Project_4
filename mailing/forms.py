@@ -47,3 +47,11 @@ class MailingForm(forms.ModelForm):
         self.fields["recipients"].widget.attrs.update({"class": "form-control"})
         self.fields["status"].widget.attrs.update({"class": "form-control"})
         self.fields["message"].widget.attrs.update({"class": "form-control"})
+
+    # def clean_message(self):
+    # email = self.cleaned_data.get("message")
+    # return email.objects.filter(owner=self.request.user)
+
+    # def clean_recipients(self):
+    # recipients = self.cleaned_data.get("recipients")
+    # return recipients.objects.filter(owner=self.request.user)

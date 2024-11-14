@@ -1,20 +1,20 @@
 from datetime import datetime
-from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
-from django.shortcuts import render
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect
-from .service import get_message_list
 
+from users.forms import UserUpdateForm
+from users.models import User
 
 from .forms import MailingForm, MessageForm, RecipientForm
 from .models import Mailing, Mailing_Attempts, Message, Recipient
-from users.models import User
-from users.forms import UserRegisterForm, UserUpdateForm
+from .service import get_mailing_attempts_list, get_mailing_list, get_message_list, get_recipient_list
 
 
 class UserDetailView(DetailView):
@@ -24,7 +24,7 @@ class UserDetailView(DetailView):
 
 class UserUpdateView(UpdateView):
     model = User
-    #fields = ["email", "first_name", "last_name", "phone_number", "avatar", "country", ""]
+    # fields = ["email", "first_name", "last_name", "phone_number", "avatar", "country", ""]
     form_class = UserUpdateForm
     template_name = "users_form.html"
     success_url = reverse_lazy("mailing:main")
@@ -48,6 +48,12 @@ class RecipientListView(ListView):
     model = Recipient
     template_name = "mailing/recipient_list.html"
 
+    def get_queryset(self):
+        if self.request.user.has_perm("view_recipient"):
+            return get_recipient_list()
+
+        return get_recipient_list().filter(owner=self.request.user)
+
 
 class RecipientDetailView(DetailView):
     """Контроллер отображения подробностей о получателе."""
@@ -60,7 +66,6 @@ class RecipientCreateView(CreateView):
     """Контроллер создания получателя."""
 
     model = Recipient
-    # fields = ["email", "full_name", "comment"]
     form_class = RecipientForm
     template_name = "mailing/recipient_form.html"
     success_url = reverse_lazy("mailing:recipient_list")
@@ -77,7 +82,6 @@ class RecipientUpdateView(UpdateView):
     """Контроллер изменения получателя."""
 
     model = Recipient
-    # fields = ["email", "full_name", "comment"]
     form_class = RecipientForm
     template_name = "mailing/recipient_form.html"
     success_url = reverse_lazy("mailing:recipient_list")
@@ -99,7 +103,10 @@ class MessageListView(ListView):
 
     model = Message
     template_name = "mailing/message_list.html"
+
     def get_queryset(self):
+        if self.request.user.has_perm("view_message"):
+            return get_message_list()
         return get_message_list().filter(owner=self.request.user)
 
 
@@ -114,7 +121,6 @@ class MessageCreateView(CreateView):
     """Контроллер создания сообщения."""
 
     model = Message
-    # fields = ["subject", "text"]
     form_class = MessageForm
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:message_list")
@@ -131,7 +137,6 @@ class MessageUpdateView(UpdateView):
     """Контроллер изменения сообщения."""
 
     model = Message
-    # fields = ["subject", "text"]
     form_class = MessageForm
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:message_list")
@@ -154,11 +159,17 @@ class MailingListView(ListView):
     model = Mailing
     template_name = "mailing/mailing_list.html"
 
+    def get_queryset(self):
+        if self.request.user.has_perm("view_mailing"):
+            return get_mailing_list()
+        return get_mailing_list().filter(owner=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["mailing_created"] = Mailing.objects.filter(status=Mailing.CREATED)
-        context["mailing_active"] = Mailing.objects.filter(status=Mailing.ACTIVE)
-        context["mailing_finished"] = Mailing.objects.filter(status=Mailing.FINISHED)
+        mailing = self.get_queryset()
+        context["mailing_created"] = mailing.filter(status=Mailing.CREATED)
+        context["mailing_active"] = mailing.filter(status=Mailing.ACTIVE)
+        context["mailing_finished"] = mailing.filter(status=Mailing.FINISHED)
         return context
 
 
@@ -173,7 +184,6 @@ class MailingCreateView(CreateView):
     """Контроллер создания рассылки."""
 
     model = Mailing
-    # fields = ["start_at", "end_at", "status", "message", "recipients"]
     form_class = MailingForm
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailing_list")
@@ -190,7 +200,6 @@ class MailingUpdateView(UpdateView):
     """Контроллер изменения рассылки."""
 
     model = Mailing
-    # fields = ["start_at", "end_at", "status", "message", "recipients"]
     form_class = MailingForm
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailing_list")
@@ -212,6 +221,9 @@ class MailingAttemptsListView(ListView):
 
     model = Mailing_Attempts
     template_name = "mailing/mailing_attempts_list.html"
+
+    def get_queryset(self):
+        return get_mailing_attempts_list().filter(owner=self.request.user)
 
 
 def sending_mail_active(request, *args, **kwargs):
