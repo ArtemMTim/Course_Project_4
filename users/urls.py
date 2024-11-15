@@ -17,9 +17,3 @@ urlpatterns = [
     ),
     path("email_confirm/<str:token>/", email_verification, name="email_verification"),
 ]
-
-################################################################
-# urlpatterns = [
-# path('password-reset/', UserForgotPasswordView.as_view(), name='password_reset'),
-# path('set-new-password/<uidb64>/<token>/', UserPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-# ]

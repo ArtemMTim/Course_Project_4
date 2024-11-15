@@ -49,9 +49,8 @@ class RecipientListView(ListView):
     template_name = "mailing/recipient_list.html"
 
     def get_queryset(self):
-        if self.request.user.has_perm("view_recipient"):
+        if self.request.user.has_perm("mailing.view_recipient"):
             return get_recipient_list()
-
         return get_recipient_list().filter(owner=self.request.user)
 
 
@@ -105,7 +104,7 @@ class MessageListView(ListView):
     template_name = "mailing/message_list.html"
 
     def get_queryset(self):
-        if self.request.user.has_perm("view_message"):
+        if self.request.user.has_perm("mailing.view_message"):
             return get_message_list()
         return get_message_list().filter(owner=self.request.user)
 
@@ -160,7 +159,7 @@ class MailingListView(ListView):
     template_name = "mailing/mailing_list.html"
 
     def get_queryset(self):
-        if self.request.user.has_perm("view_mailing"):
+        if self.request.user.has_perm("mailing.view_mailing"):
             return get_mailing_list()
         return get_mailing_list().filter(owner=self.request.user)
 
@@ -223,181 +222,57 @@ class MailingAttemptsListView(ListView):
     template_name = "mailing/mailing_attempts_list.html"
 
     def get_queryset(self):
+        if self.request.user.has_perm("mailing.view_mailing_attempts"):
+            return get_mailing_attempts_list()
         return get_mailing_attempts_list().filter(owner=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        attempt = self.get_queryset()
+        context["success"] = attempt.filter(attempt_status="успешно").count()
+        context["failure"] = attempt.filter(attempt_status="неуспешно").count()
+        context["total"] = attempt.count()
+        return context
 
-def sending_mail_active(request, *args, **kwargs):
-    mails = Mailing.objects.filter(status=Mailing.ACTIVE)
+
+def sending_mail(request, pk):
+    mail = Mailing.objects.get(pk=pk)
     email_from = settings.EMAIL_HOST_USER
     attempts_list = []
-
-    for mailing in mails:
-        subject = mailing.message.subject
-        message = mailing.message.text
-        owner = mailing.owner
-        recipient_list = [recipient.email for recipient in mailing.recipients.all()]
-
+    subject = mail.message.subject
+    message = mail.message.text
+    owner = mail.owner
+    recipients_list = [recipient.email for recipient in mail.recipients.all()]
+    for recipient in recipients_list:
         try:
-            send_mail(subject, message, email_from, recipient_list)
+            send_mail(subject, message, email_from, recipient_list=[recipient])
+            mail.status = Mailing.ACTIVE
+            mail.start_at = datetime.now()
+            mail.save()
             mailing_attempts = Mailing_Attempts(
                 attempt_date=datetime.now(),
                 attempt_status=Mailing_Attempts.SUCCESS,
                 mail_server_response="Email sent successfully",
-                mailing=mailing,
+                mailing=mail,
                 owner=owner,
             )
             mailing_attempts.save()
             result = "Sending mail successful"
-
-            attempts_list.append((result, subject, message, recipient_list))
-
+            attempts_list.append((result, subject, message, recipient))
         except Exception as e:
+            mail.status = Mailing.ACTIVE
+            mail.start_at = datetime.now()
+            mail.save()
             mailing_attempts = Mailing_Attempts(
                 attempt_date=datetime.now(),
                 attempt_status=Mailing_Attempts.FAILURE,
                 mail_server_response=str(e),
-                mailing=mailing,
+                mailing=mail,
                 owner=owner,
             )
             mailing_attempts.save()
             result = f"Sending mail failed with: {str(e)}"
-
-            attempts_list.append((result, subject, message, recipient_list))
-
-    context = {"attempts_list": attempts_list}
-    return render(request, "mailing/send_mail_result.html", context)
-
-
-def sending_one_mail_active(request, pk):
-    mail = Mailing.objects.get(pk=pk)
-
-    email_from = settings.EMAIL_HOST_USER
-    attempts_list = []
-
-    subject = mail.message.subject
-    message = mail.message.text
-    owner = mail.owner
-    recipient_list = [recipient.email for recipient in mail.recipients.all()]
-
-    try:
-        send_mail(subject, message, email_from, recipient_list)
-        mailing_attempts = Mailing_Attempts(
-            attempt_date=datetime.now(),
-            attempt_status=Mailing_Attempts.SUCCESS,
-            mail_server_response="Email sent successfully",
-            mailing=mail,
-            owner=owner,
-        )
-        mailing_attempts.save()
-        result = "Sending mail successful"
-
-        attempts_list.append((result, subject, message, recipient_list))
-
-    except Exception as e:
-        mailing_attempts = Mailing_Attempts(
-            attempt_date=datetime.now(),
-            attempt_status=Mailing_Attempts.FAILURE,
-            mail_server_response=str(e),
-            mailing=mail,
-            owner=owner,
-        )
-        mailing_attempts.save()
-        result = f"Sending mail failed with: {str(e)}"
-
-        attempts_list.append((result, subject, message, recipient_list))
-
-    context = {"attempts_list": attempts_list}
-    return render(request, "mailing/send_mail_result.html", context)
-
-
-def sending_mail_created(request, *args, **kwargs):
-    mails = Mailing.objects.filter(status=Mailing.CREATED)
-    email_from = settings.EMAIL_HOST_USER
-    attempts_list = []
-
-    for mailing in mails:
-        subject = mailing.message.subject
-        message = mailing.message.text
-        owner = mailing.owner
-        recipient_list = [recipient.email for recipient in mailing.recipients.all()]
-
-        try:
-            send_mail(subject, message, email_from, recipient_list)
-            mailing.status = Mailing.ACTIVE
-            mailing.start_at = datetime.now()
-            mailing.save()
-            mailing_attempts = Mailing_Attempts(
-                attempt_date=datetime.now(),
-                attempt_status=Mailing_Attempts.SUCCESS,
-                mail_server_response="Email sent successfully",
-                mailing=mailing,
-                owner=owner,
-            )
-            mailing_attempts.save()
-            result = "Sending mail successful"
-            attempts_list.append((result, subject, message, recipient_list))
-
-        except Exception as e:
-            mailing.status = Mailing.ACTIVE
-            mailing.start_at = datetime.now()
-            mailing.save()
-            mailing_attempts = Mailing_Attempts(
-                attempt_date=datetime.now(),
-                attempt_status=Mailing_Attempts.FAILURE,
-                mail_server_response=str(e),
-                mailing=mailing,
-                owner=owner,
-            )
-            mailing_attempts.save()
-            result = f"Sending mail failed with: {str(e)}"
-            attempts_list.append((result, subject, message, recipient_list))
-
-    context = {"attempts_list": attempts_list}
-    return render(request, "mailing/send_mail_result.html", context)
-
-
-def sending_one_mail_created(request, pk):
-    mail = Mailing.objects.get(pk=pk)
-
-    email_from = settings.EMAIL_HOST_USER
-    attempts_list = []
-
-    subject = mail.message.subject
-    message = mail.message.text
-    owner = mail.owner
-    recipient_list = [recipient.email for recipient in mail.recipients.all()]
-
-    try:
-        send_mail(subject, message, email_from, recipient_list)
-        mail.status = Mailing.ACTIVE
-        mail.start_at = datetime.now()
-        mail.save()
-        mailing_attempts = Mailing_Attempts(
-            attempt_date=datetime.now(),
-            attempt_status=Mailing_Attempts.SUCCESS,
-            mail_server_response="Email sent successfully",
-            mailing=mail,
-            owner=owner,
-        )
-        mailing_attempts.save()
-        result = "Sending mail successful"
-        attempts_list.append((result, subject, message, recipient_list))
-
-    except Exception as e:
-        mail.status = Mailing.ACTIVE
-        mail.start_at = datetime.now()
-        mail.save()
-        mailing_attempts = Mailing_Attempts(
-            attempt_date=datetime.now(),
-            attempt_status=Mailing_Attempts.FAILURE,
-            mail_server_response=str(e),
-            mailing=mail,
-            owner=owner,
-        )
-        mailing_attempts.save()
-        result = f"Sending mail failed with: {str(e)}"
-        attempts_list.append((result, subject, message, recipient_list))
-
+            attempts_list.append((result, subject, message, recipient))
     context = {"attempts_list": attempts_list}
     return render(request, "mailing/send_mail_result.html", context)
 

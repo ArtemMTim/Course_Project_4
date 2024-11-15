@@ -26,16 +26,13 @@ from mailing.views import (
     UsersListView,
     UserUpdateView,
     finish_mailing,
-    sending_mail_active,
-    sending_mail_created,
-    sending_one_mail_active,
-    sending_one_mail_created,
+    sending_mail,
 )
 
 app_name = MailingConfig.name
 
 urlpatterns = [
-    path("", cache_page(60)(MailingView.as_view()), name="main"),
+    path("", MailingView.as_view(), name="main"),
     path("recipients/", cache_page(60)(RecipientListView.as_view()), name="recipient_list"),
     path("recipients/<int:pk>/", RecipientDetailView.as_view(), name="recipient_detail"),
     path("recipients/create/", RecipientCreateView.as_view(), name="recipient_create"),
@@ -52,11 +49,8 @@ urlpatterns = [
     path("mailing/<int:pk>/update/", MailingUpdateView.as_view(), name="mailing_update"),
     path("mailing/<int:pk>/delete/", MailingDeleteView.as_view(), name="mailing_delete"),
     path("mailing_attempts/", MailingAttemptsListView.as_view(), name="mailing_attempts_list"),
-    path("send_mail_active/", sending_mail_active, name="send_mail_active"),
-    path("send_mail_created/", sending_mail_created, name="send_mail_created"),
     path("finish_mailing/<int:pk>/", finish_mailing, name="finish_mailing"),
-    path("send_mail_created/<int:pk>/", sending_one_mail_created, name="send_one_mail_created"),
-    path("send_mail_active/<int:pk>/", sending_one_mail_active, name="send_one_mail_active"),
+    path("send_mail/<int:pk>/", sending_mail, name="send_mail"),
     path("users_list/", cache_page(60)(UsersListView.as_view()), name="users_list"),
     path("users/<int:pk>/block", BlockUserView.as_view(), name="users_block"),
     path("users/<int:pk>/unblock", UnblockUserView.as_view(), name="users_unblock"),
