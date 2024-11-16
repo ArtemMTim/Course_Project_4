@@ -4,6 +4,7 @@ from users.models import User
 
 
 class Recipient(models.Model):
+    """Модель получателя."""
     email = models.EmailField(
         unique=True, verbose_name="Адрес электронной почты", help_text="Введите адрес электронной почты получателя"
     )
@@ -33,6 +34,7 @@ class Recipient(models.Model):
 
 
 class Message(models.Model):
+    """Модель сообщения."""
     subject = models.CharField(max_length=100, verbose_name="Тема сообщения", help_text="Введите тему сообщения")
     text = models.TextField(verbose_name="Текст сообщения", help_text="Введите текст сообщения")
     owner = models.ForeignKey(
@@ -54,6 +56,7 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
+    """Модель рассылки."""
     FINISHED = "завершена"
     CREATED = "создана"
     ACTIVE = "запущена"
@@ -97,6 +100,7 @@ class Mailing(models.Model):
 
 
 class Mailing_Attempts(models.Model):
+    """Модель попыток рассылки."""
     SUCCESS = "успешно"
     FAILURE = "неуспешно"
     ATTEMPT_STATUS_CHOICES = [(SUCCESS, "успешно"), (FAILURE, "неуспешно")]

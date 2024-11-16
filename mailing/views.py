@@ -14,6 +14,7 @@ from .service import get_mailing_attempts_list, get_mailing_list, get_message_li
 
 
 class MailingView(TemplateView):
+   """Контроллер отображения главной страницы с рассылками.""""
     models = [Recipient, Mailing]
     template_name = "mailing/main.html"
 
@@ -219,6 +220,8 @@ class MailingAttemptsListView(LoginRequiredMixin, ListView):
 
 
 def sending_mail(request, pk):
+    """Контроллер отправки рассылок. Принимает pk рассылки,
+    отправляет согласно списка рассылки, вносит необходимые данные в БД"""
     mail = Mailing.objects.get(pk=pk)
     email_from = settings.EMAIL_HOST_USER
     attempts_list = []
@@ -261,6 +264,8 @@ def sending_mail(request, pk):
 
 
 def finish_mailing(request, pk):
+    """Контроллер завершения рассылки. Принимает pk рассылки,
+    помечает рассылку как завершенную, вносит необходимые данные в БД"""
     mail = Mailing.objects.get(pk=pk)
     mail.status = Mailing.FINISHED
     mail.end_at = datetime.now()
