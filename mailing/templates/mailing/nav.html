@@ -19,16 +19,16 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'mailing:mailing_attempts_list' %}">Отчёты о рассылках</a>
         </li>
-        {% if perms.user.view_users %}
+        {% if "users.view_user" in perms %}
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'mailing:users_list' %}">Пользователи сервиса</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'users:users_list' %}">Пользователи сервиса</a>
         </li>
         {% endif %}}
 
 
 
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'mailing:users_detail' user.pk %}">Мой профиль</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'users:users_detail' user.pk %}">Мой профиль</a>
         </li>
         <li class="nav-item">
         <form method="post" action="{% url 'users:logout' %}" style="display: inline;">

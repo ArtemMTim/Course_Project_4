@@ -18,7 +18,9 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:recipient_detail' recipient.pk %}" role="button">Подробнее</a>
+                    {% if recipient.owner == user %}
                     <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:recipient_update' recipient.pk %}" role="button">Изменить</a>
+                    {% endif %}
                 </div>
               </div>
         </div>

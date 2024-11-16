@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserCreationForm
 
 from .models import User
 
@@ -86,3 +86,31 @@ class UserUpdateForm(forms.ModelForm):
         if User.objects.filter(email=email_address).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError("Этот адрес электронной почты уже зарегистрирован.")
         return email_address
+
+
+class UserForgotPasswordForm(PasswordResetForm):
+    """
+    Запрос на восстановление пароля
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы
+        """
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
+
+
+class UserSetNewPasswordForm(SetPasswordForm):
+    """
+    Изменение пароля пользователя после подтверждения
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы
+        """
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})

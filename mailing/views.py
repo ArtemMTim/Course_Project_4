@@ -3,31 +3,14 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
-from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView, TemplateView, View
+from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-
-from users.forms import UserUpdateForm
-from users.models import User
 
 from .forms import MailingForm, MessageForm, RecipientForm
 from .models import Mailing, Mailing_Attempts, Message, Recipient
 from .service import get_mailing_attempts_list, get_mailing_list, get_message_list, get_recipient_list
-
-
-class UserDetailView(DetailView):
-    model = User
-    template_name = "user_detail.html"
-
-
-class UserUpdateView(UpdateView):
-    model = User
-    # fields = ["email", "first_name", "last_name", "phone_number", "avatar", "country", ""]
-    form_class = UserUpdateForm
-    template_name = "users_form.html"
-    success_url = reverse_lazy("mailing:main")
 
 
 class MailingView(TemplateView):
@@ -42,7 +25,7 @@ class MailingView(TemplateView):
         return context
 
 
-class RecipientListView(ListView):
+class RecipientListView(LoginRequiredMixin, ListView):
     """Контроллер отображения списка получателей."""
 
     model = Recipient
@@ -54,14 +37,14 @@ class RecipientListView(ListView):
         return get_recipient_list().filter(owner=self.request.user)
 
 
-class RecipientDetailView(DetailView):
+class RecipientDetailView(LoginRequiredMixin, DetailView):
     """Контроллер отображения подробностей о получателе."""
 
     model = Recipient
     template_name = "mailing/recipient_detail.html"
 
 
-class RecipientCreateView(CreateView):
+class RecipientCreateView(LoginRequiredMixin, CreateView):
     """Контроллер создания получателя."""
 
     model = Recipient
@@ -77,7 +60,7 @@ class RecipientCreateView(CreateView):
         return super().form_valid(form)
 
 
-class RecipientUpdateView(UpdateView):
+class RecipientUpdateView(LoginRequiredMixin, UpdateView):
     """Контроллер изменения получателя."""
 
     model = Recipient
@@ -89,7 +72,7 @@ class RecipientUpdateView(UpdateView):
         return reverse_lazy("mailing:recipient_detail", kwargs={"pk": self.object.pk})
 
 
-class RecipientDeleteView(DeleteView):
+class RecipientDeleteView(LoginRequiredMixin, DeleteView):
     """Контроллер контроллер удаления получателя."""
 
     model = Recipient
@@ -97,7 +80,7 @@ class RecipientDeleteView(DeleteView):
     success_url = reverse_lazy("mailing:recipient_list")
 
 
-class MessageListView(ListView):
+class MessageListView(LoginRequiredMixin, ListView):
     """Контроллер отображения списка сообщений."""
 
     model = Message
@@ -109,14 +92,14 @@ class MessageListView(ListView):
         return get_message_list().filter(owner=self.request.user)
 
 
-class MessageDetailView(DetailView):
+class MessageDetailView(LoginRequiredMixin, DetailView):
     """Контроллер отображения подробностей о сообщении."""
 
     model = Message
     template_name = "mailing/message_detail.html"
 
 
-class MessageCreateView(CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
     """Контроллер создания сообщения."""
 
     model = Message
@@ -132,7 +115,7 @@ class MessageCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     """Контроллер изменения сообщения."""
 
     model = Message
@@ -144,7 +127,7 @@ class MessageUpdateView(UpdateView):
         return reverse_lazy("mailing:message_detail", kwargs={"pk": self.object.pk})
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     """Контроллер удаления сообщения."""
 
     model = Message
@@ -152,7 +135,7 @@ class MessageDeleteView(DeleteView):
     success_url = reverse_lazy("mailing:message_list")
 
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, ListView):
     """Контроллер отображения списка рассылок."""
 
     model = Mailing
@@ -172,14 +155,14 @@ class MailingListView(ListView):
         return context
 
 
-class MailingDetailView(DetailView):
+class MailingDetailView(LoginRequiredMixin, DetailView):
     """Контроллер отображения подробностей о рассылке."""
 
     model = Mailing
     template_name = "mailing/mailing_detail.html"
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(LoginRequiredMixin, CreateView):
     """Контроллер создания рассылки."""
 
     model = Mailing
@@ -195,7 +178,7 @@ class MailingCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """Контроллер изменения рассылки."""
 
     model = Mailing
@@ -207,7 +190,7 @@ class MailingUpdateView(UpdateView):
         return reverse_lazy("mailing:mailing_detail", kwargs={"pk": self.object.pk})
 
 
-class MailingDeleteView(DeleteView):
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
     """Контроллер удаления рассылки."""
 
     model = Mailing
@@ -215,7 +198,7 @@ class MailingDeleteView(DeleteView):
     success_url = reverse_lazy("mailing:mailing_list")
 
 
-class MailingAttemptsListView(ListView):
+class MailingAttemptsListView(LoginRequiredMixin, ListView):
     """Контроллер отображения списка попыток отправки."""
 
     model = Mailing_Attempts
@@ -284,30 +267,3 @@ def finish_mailing(request, pk):
     mail.save()
     context = {"mail": mail}
     return render(request, "mailing/finished_mailing_info.html", context)
-
-
-class UsersListView(LoginRequiredMixin, ListView):
-    model = User
-    template_name = "users_list.html"
-
-
-class BlockUserView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        if not request.user.has_perm("can_block_user"):
-            return HttpResponseForbidden("У вас нет прав на это действие.")
-
-        user.is_active = False
-        user.save()
-        return redirect("mailing:users_list")
-
-
-class UnblockUserView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        if not request.user.has_perm("can_block_user"):
-            return HttpResponseForbidden("У вас нет прав на это действие.")
-
-        user.is_active = True
-        user.save()
-        return redirect("mailing:users_list")
