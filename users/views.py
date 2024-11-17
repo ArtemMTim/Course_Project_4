@@ -17,6 +17,7 @@ from .models import User
 
 class RegisterView(CreateView):
     """Контроллер рагистрации в сервисе."""
+
     template_name = "register.html"
     form_class = UserRegisterForm
     success_url = reverse_lazy("users:login")
@@ -49,12 +50,14 @@ def email_verification(request, token):
 
 class UserDetailView(DetailView):
     """Контроллер отображения профиля пользователя."""
+
     model = User
     template_name = "user_detail.html"
 
 
 class UserUpdateView(UpdateView):
     """Контроллер обновления профиля пользователя."""
+
     model = User
 
     form_class = UserUpdateForm
@@ -94,12 +97,14 @@ class UserPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmView
 
 class UsersListView(LoginRequiredMixin, ListView):
     """Контроллер отображения списка пользователей сервиса."""
+
     model = User
     template_name = "users_list.html"
 
 
 class BlockUserView(LoginRequiredMixin, View):
     """Контроллер блокировки пользователей сервиса."""
+
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         if not request.user.has_perm("can_block_user"):
@@ -112,6 +117,7 @@ class BlockUserView(LoginRequiredMixin, View):
 
 class UnblockUserView(LoginRequiredMixin, View):
     """Контроллер разблокировки пользователей сервиса."""
+
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         if not request.user.has_perm("can_block_user"):

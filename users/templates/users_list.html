@@ -5,38 +5,36 @@
 {% block content %}
 
 
-
 <div class="container">
     <div class="container mt-3">
-            <h1 class="my-0 font-weight-normal text-center">Пользователи сервиса</h1>
+        <h1 class="my-0 font-weight-normal text-center">Пользователи сервиса</h1>
     </div>
-        {% for user in object_list %}
+    {% for user in object_list %}
 
-        <div class="container mt-3">
-            <h4 class="my-0 font-weight-normal">Пользователь: {{user}}</h4>
-        </div>
+    <div class="container mt-3">
+        <h4 class="my-0 font-weight-normal">Пользователь: {{user}}</h4>
+    </div>
     {% if user.is_active %}
     <div class="btn-group mt-3">
-                      <form action = "{% url 'users:users_block' user.pk %}" method="post">
-                          {% csrf_token %}
-                          <button class="btn btn-lg btn-block btn-danger" role="button" type="submit">Заблокировать пользователя</button>
-                      </form>
+        <form action="{% url 'users:users_block' user.pk %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-lg btn-block btn-danger" role="button" type="submit">Заблокировать пользователя
+            </button>
+        </form>
     </div>
     {% else %}
     <div class="btn-group mt-3">
-                      <form action = "{% url 'users:users_unblock' user.pk %}" method="post">
-                          {% csrf_token %}
-                          <button class="btn btn-lg btn-block btn-primary" role="button" type="submit">Разблокировать пользователя</button>
-                      </form>
-        </div>
+        <form action="{% url 'users:users_unblock' user.pk %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-lg btn-block btn-primary" role="button" type="submit">Разблокировать пользователя
+            </button>
+        </form>
+    </div>
     {% endif %}
-        {% endfor %}
-
-
+    {% endfor %}
 
 
 </div>
-
 
 
 {% endblock %}

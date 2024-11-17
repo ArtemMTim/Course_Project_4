@@ -14,7 +14,8 @@ from .service import get_mailing_attempts_list, get_mailing_list, get_message_li
 
 
 class MailingView(TemplateView):
-   """Контроллер отображения главной страницы с рассылками.""""
+    """Контроллер отображения главной страницы с рассылками."""
+
     models = [Recipient, Mailing]
     template_name = "mailing/main.html"
 
@@ -232,9 +233,10 @@ def sending_mail(request, pk):
     for recipient in recipients_list:
         try:
             send_mail(subject, message, email_from, recipient_list=[recipient])
-            mail.status = Mailing.ACTIVE
-            mail.start_at = datetime.now()
-            mail.save()
+            if mail.status == Mailing.CREATED:
+                mail.status = Mailing.ACTIVE
+                mail.start_at = datetime.now()
+                mail.save()
             mailing_attempts = Mailing_Attempts(
                 attempt_date=datetime.now(),
                 attempt_status=Mailing_Attempts.SUCCESS,
@@ -246,9 +248,10 @@ def sending_mail(request, pk):
             result = "Sending mail successful"
             attempts_list.append((result, subject, message, recipient))
         except Exception as e:
-            mail.status = Mailing.ACTIVE
-            mail.start_at = datetime.now()
-            mail.save()
+            if mail.status == Mailing.CREATED:
+                mail.status = Mailing.ACTIVE
+                mail.start_at = datetime.now()
+                mail.save()
             mailing_attempts = Mailing_Attempts(
                 attempt_date=datetime.now(),
                 attempt_status=Mailing_Attempts.FAILURE,

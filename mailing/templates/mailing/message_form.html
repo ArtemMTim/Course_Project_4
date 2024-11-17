@@ -5,32 +5,30 @@
 {% block content %}
 
 
-
 <div class="container">
 
-        <h1 class="mb-4">
+    <h1 class="mb-4">
+        {% if message %}
+        Форма изменения сообщения
+        {% else %}
+        Форма создания сообщения
+        {% endif %}
+    </h1>
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">
             {% if message %}
-            Форма изменения сообщения
+            Сохранить
             {% else %}
-            Форма создания сообщения
+            Создать
             {% endif %}
-            </h1>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">
-                {% if message %}
-                Сохранить
-                {% else %}
-                Создать
-                {% endif %}
-            </button>
-            <a href="{% url 'mailing:message_list' %}" class="btn btn-secondary">Отмена</a>
-        </form>
+        </button>
+        <a class="btn btn-secondary" href="{% url 'mailing:message_list' %}">Отмена</a>
+    </form>
 
 
 </div>
-
 
 
 {% endblock %}
