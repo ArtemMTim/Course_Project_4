@@ -2,6 +2,7 @@ from django.urls import path
 from django.views.decorators.cache import cache_page
 
 from mailing.apps import MailingConfig
+
 from .views import (
     MailingAttemptsListView,
     MailingCreateView,

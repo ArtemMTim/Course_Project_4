@@ -3,7 +3,8 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
-from django.shortcuts import render
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -70,6 +71,12 @@ class RecipientUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "mailing/recipient_form.html"
     success_url = reverse_lazy("mailing:recipient_list")
 
+    def post(self, request, pk):
+        recipient = get_object_or_404(Recipient, pk=pk)
+        if not self.request.user == recipient.owner:
+            return HttpResponseForbidden("У вас нет прав на это действие.")
+        return super().post(request, pk)
+
     def get_success_url(self):
         return reverse_lazy("mailing:recipient_detail", kwargs={"pk": self.object.pk})
 
@@ -124,6 +131,12 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MessageForm
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:message_list")
+
+    def post(self, request, pk):
+        message = get_object_or_404(Message, pk=pk)
+        if not self.request.user == message.owner:
+            return HttpResponseForbidden("У вас нет прав на это действие.")
+        return super().post(request, pk)
 
     def get_success_url(self):
         return reverse_lazy("mailing:message_detail", kwargs={"pk": self.object.pk})
@@ -187,6 +200,12 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailingForm
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailing_list")
+
+    def post(self, request, pk):
+        mailing = get_object_or_404(Mailing, pk=pk)
+        if not self.request.user == mailing.owner:
+            return HttpResponseForbidden("У вас нет прав на это действие.")
+        return super().post(request, pk)
 
     def get_success_url(self):
         return reverse_lazy("mailing:mailing_detail", kwargs={"pk": self.object.pk})
