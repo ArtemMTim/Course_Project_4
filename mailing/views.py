@@ -75,7 +75,6 @@ class RecipientUpdateView(LoginRequiredMixin, UpdateView):
         recipient = get_object_or_404(Recipient, pk=pk)
         if not self.request.user == recipient.owner:
             return HttpResponseForbidden("У вас нет прав на это действие.")
-        return super().post(request, pk)
 
     def get_success_url(self):
         return reverse_lazy("mailing:recipient_detail", kwargs={"pk": self.object.pk})
@@ -87,6 +86,11 @@ class RecipientDeleteView(LoginRequiredMixin, DeleteView):
     model = Recipient
     template_name = "mailing/recipient_confirm_delete.html"
     success_url = reverse_lazy("mailing:recipient_list")
+
+    def post(self, request, pk):
+        recipient = get_object_or_404(Recipient, pk=pk)
+        if not self.request.user == recipient.owner:
+            return HttpResponseForbidden("У вас нет прав на это действие.")
 
 
 class MessageListView(LoginRequiredMixin, ListView):
@@ -136,7 +140,6 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
         message = get_object_or_404(Message, pk=pk)
         if not self.request.user == message.owner:
             return HttpResponseForbidden("У вас нет прав на это действие.")
-        return super().post(request, pk)
 
     def get_success_url(self):
         return reverse_lazy("mailing:message_detail", kwargs={"pk": self.object.pk})
@@ -148,6 +151,11 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     template_name = "mailing/message_confirm_delete.html"
     success_url = reverse_lazy("mailing:message_list")
+
+    def post(self, request, pk):
+        message = get_object_or_404(Message, pk=pk)
+        if not self.request.user == message.owner:
+            return HttpResponseForbidden("У вас нет прав на это действие.")
 
 
 class MailingListView(LoginRequiredMixin, ListView):
@@ -205,7 +213,6 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
         mailing = get_object_or_404(Mailing, pk=pk)
         if not self.request.user == mailing.owner:
             return HttpResponseForbidden("У вас нет прав на это действие.")
-        return super().post(request, pk)
 
     def get_success_url(self):
         return reverse_lazy("mailing:mailing_detail", kwargs={"pk": self.object.pk})
@@ -217,6 +224,11 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = "mailing/mailing_confirm_delete.html"
     success_url = reverse_lazy("mailing:mailing_list")
+
+    def post(self, request, pk):
+        mailing = get_object_or_404(Mailing, pk=pk)
+        if not self.request.user == mailing.owner:
+            return HttpResponseForbidden("У вас нет прав на это действие.")
 
 
 class MailingAttemptsListView(LoginRequiredMixin, ListView):
