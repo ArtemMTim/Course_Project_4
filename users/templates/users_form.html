@@ -1,0 +1,24 @@
+{% extends 'mailing/base_template.html' %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">
+            Сохранить
+        </button>
+        <a class="btn btn-secondary" href="{% url 'users:users_detail' user.pk %}">Отмена</a>
+    </form>
+
+
+</div>
+
+
+{% endblock %}

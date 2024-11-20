@@ -1,0 +1,21 @@
+{% extends 'mailing/base_template.html' %}
+
+{% block title %}Главная страница {% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+
+
+    <div class="container mt-3">
+        <h1 class="my-0 font-weight-normal text-center">Общая информация по рассылкам</h1>
+        <h4 class="my-0 font-weight-normal mt-3">Количество всех рассылок: {{mailing_all|length}}</h4>
+        <h4 class="my-0 font-weight-normal mt-3">Количество активных рассылок: {{mailing_active|length}}</h4>
+        <h4 class="my-0 font-weight-normal mt-3">Количество уникальных получателей: {{recipients_all|length}}</h4>
+
+    </div>
+</div>
+
+
+{% endblock %}

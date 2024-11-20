@@ -1,0 +1,42 @@
+{% extends 'mailing/base_template.html' %}
+
+{% block title %}Страница отчётов о рассылках{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="container mt-3">
+        <h1 class="my-0 font-weight-normal text-center">Статистика о рассылках</h1>
+    </div>
+    <div class="container mt-3">
+        <h4 class="my-0 font-weight-normal">Статистика о рассылках: </h4>
+        <h4 class="my-0 font-weight-normal">Успешных попыток рассылок: {{success}}</h4>
+        <h4 class="my-0 font-weight-normal">Неуспешных попыток рассылок: {{failure}}</h4>
+        <h4 class="my-0 font-weight-normal">Всего рассылок: {{total}}</h4>
+    </div>
+    <div class="container mt-3">
+        <h1 class="my-0 font-weight-normal text-center">Отчёты о рассылках</h1>
+    </div>
+
+    {% for mailing_attempt in object_list %}
+
+
+    <div class="container mt-3">
+        <h4 class="my-0 font-weight-normal">Рассылка: </h4>
+        <h4 class="my-0 font-weight-normal">Статус: {{mailing_attempt.attempt_status}}</h4>
+        <h4 class="my-0 font-weight-normal">Ответ сервера: {{mailing_attempt.mail_server_response}}</h4>
+        <h4 class="my-0 font-weight-normal">Дата рассылки: {{mailing_attempt.attempt_date}}</h4>
+        <h4 class="my-0 font-weight-normal">Рассылка: {{mailing_attempt.mailing}}</h4>
+        <div class="d-flex justify-content-between align-items-center">
+
+        </div>
+    </div>
+
+    {% endfor %}
+
+
+</div>
+
+
+{% endblock %}

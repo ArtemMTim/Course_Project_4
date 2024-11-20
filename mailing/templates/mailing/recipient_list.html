@@ -1,0 +1,44 @@
+{% extends 'mailing/base_template.html' %}
+
+{% block title %}Страница получателей{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="container mt-3">
+        <h1 class="my-0 font-weight-normal text-center">Получатели</h1>
+    </div>
+    {% for recipient in object_list %}
+
+
+    <div class="container mt-3">
+        <h4 class="my-0 font-weight-normal">Получатель: {{recipient}}</h4>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+                <a class="btn btn-lg btn-block btn-outline-primary"
+                   href="{% url 'mailing:recipient_detail' recipient.pk %}" role="button">Подробнее</a>
+                {% if recipient.owner == user %}
+                <a class="btn btn-lg btn-block btn-outline-primary"
+                   href="{% url 'mailing:recipient_update' recipient.pk %}" role="button">Изменить</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+
+</div>
+<div class="container">
+    <div class="container mt-5">
+        <div class="btn-group">
+            <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:recipient_create' %}"
+               role="button">Добавить получателя</a>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
