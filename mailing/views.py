@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -63,7 +63,7 @@ class RecipientCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class RecipientUpdateView(LoginRequiredMixin, UpdateView):
+class RecipientUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Контроллер изменения получателя."""
 
     model = Recipient
@@ -71,26 +71,30 @@ class RecipientUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "mailing/recipient_form.html"
     success_url = reverse_lazy("mailing:recipient_list")
 
-    def post(self, request, pk):
-        recipient = get_object_or_404(Recipient, pk=pk)
-        if not self.request.user == recipient.owner:
-            return HttpResponseForbidden("У вас нет прав на это действие.")
+    def test_func(self):
+        recipient = self.get_object()
+        return self.request.user == recipient.owner
+
+    def handle_no_permissions(self):
+        return HttpResponseForbidden("У вас нет прав на это действие.")
 
     def get_success_url(self):
         return reverse_lazy("mailing:recipient_detail", kwargs={"pk": self.object.pk})
 
 
-class RecipientDeleteView(LoginRequiredMixin, DeleteView):
+class RecipientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Контроллер контроллер удаления получателя."""
 
     model = Recipient
     template_name = "mailing/recipient_confirm_delete.html"
     success_url = reverse_lazy("mailing:recipient_list")
 
-    def post(self, request, pk):
-        recipient = get_object_or_404(Recipient, pk=pk)
-        if not self.request.user == recipient.owner:
-            return HttpResponseForbidden("У вас нет прав на это действие.")
+    def test_func(self):
+        recipient = self.get_object()
+        return self.request.user == recipient.owner
+
+    def handle_no_permissions(self):
+        return HttpResponseForbidden("У вас нет прав на это действие.")
 
 
 class MessageListView(LoginRequiredMixin, ListView):
@@ -128,7 +132,7 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class MessageUpdateView(LoginRequiredMixin, UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Контроллер изменения сообщения."""
 
     model = Message
@@ -136,26 +140,30 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:message_list")
 
-    def post(self, request, pk):
-        message = get_object_or_404(Message, pk=pk)
-        if not self.request.user == message.owner:
-            return HttpResponseForbidden("У вас нет прав на это действие.")
+    def test_func(self):
+        recipient = self.get_object()
+        return self.request.user == recipient.owner
+
+    def handle_no_permissions(self):
+        return HttpResponseForbidden("У вас нет прав на это действие.")
 
     def get_success_url(self):
         return reverse_lazy("mailing:message_detail", kwargs={"pk": self.object.pk})
 
 
-class MessageDeleteView(LoginRequiredMixin, DeleteView):
+class MessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Контроллер удаления сообщения."""
 
     model = Message
     template_name = "mailing/message_confirm_delete.html"
     success_url = reverse_lazy("mailing:message_list")
 
-    def post(self, request, pk):
-        message = get_object_or_404(Message, pk=pk)
-        if not self.request.user == message.owner:
-            return HttpResponseForbidden("У вас нет прав на это действие.")
+    def test_func(self):
+        recipient = self.get_object()
+        return self.request.user == recipient.owner
+
+    def handle_no_permissions(self):
+        return HttpResponseForbidden("У вас нет прав на это действие.")
 
 
 class MailingListView(LoginRequiredMixin, ListView):
@@ -201,7 +209,7 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class MailingUpdateView(LoginRequiredMixin, UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Контроллер изменения рассылки."""
 
     model = Mailing
@@ -209,26 +217,30 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailing_list")
 
-    def post(self, request, pk):
-        mailing = get_object_or_404(Mailing, pk=pk)
-        if not self.request.user == mailing.owner:
-            return HttpResponseForbidden("У вас нет прав на это действие.")
+    def test_func(self):
+        recipient = self.get_object()
+        return self.request.user == recipient.owner
+
+    def handle_no_permissions(self):
+        return HttpResponseForbidden("У вас нет прав на это действие.")
 
     def get_success_url(self):
         return reverse_lazy("mailing:mailing_detail", kwargs={"pk": self.object.pk})
 
 
-class MailingDeleteView(LoginRequiredMixin, DeleteView):
+class MailingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Контроллер удаления рассылки."""
 
     model = Mailing
     template_name = "mailing/mailing_confirm_delete.html"
     success_url = reverse_lazy("mailing:mailing_list")
 
-    def post(self, request, pk):
-        mailing = get_object_or_404(Mailing, pk=pk)
-        if not self.request.user == mailing.owner:
-            return HttpResponseForbidden("У вас нет прав на это действие.")
+    def test_func(self):
+        recipient = self.get_object()
+        return self.request.user == recipient.owner
+
+    def handle_no_permissions(self):
+        return HttpResponseForbidden("У вас нет прав на это действие.")
 
 
 class MailingAttemptsListView(LoginRequiredMixin, ListView):
